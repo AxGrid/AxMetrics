@@ -1,5 +1,6 @@
 package com.axgrid.metrics.repository;
 
+import com.axgrid.metrics.AxMetricsUtils;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -39,15 +40,13 @@ public class AxMetricGaugeRepository {
 
     private void createGauge(String key, String tags) {
         Gauge.Builder builder = Gauge.builder(key, () -> data.get(key).get(tags));
-        if (tags != null && !tags.equals(""))
-            Arrays.stream(tags.split(Pattern.quote(";")))
-                    .map(item -> item.split(Pattern.quote(":")))
-                    .forEach(item -> {
-                        if (item.length == 1)
-                            builder.tags(item[0]);
-                        else
-                            builder.tag(item[0], item[1]);
-                    });
+        AxMetricsUtils.tags(tags).forEach(tag -> {
+            if (tag.getValue() == null)
+                builder.tags(tag.getKey());
+            else
+                builder.tag(tag.getKey(), tag.getValue().toString());
+        });
+
         builder.register(meterRegistry);
     }
 

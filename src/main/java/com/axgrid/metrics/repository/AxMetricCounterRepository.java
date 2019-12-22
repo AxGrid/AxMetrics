@@ -1,5 +1,6 @@
 package com.axgrid.metrics.repository;
 
+import com.axgrid.metrics.AxMetricsUtils;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +39,12 @@ public class AxMetricCounterRepository {
 
     private Counter createCounter(String key, String tags) {
         Counter.Builder builder = Counter.builder(key);
-        if (tags != null && !tags.equals(""))
-            Arrays.stream(tags.split(Pattern.quote(";")))
-                .map(item -> item.split(Pattern.quote(":")))
-                .forEach(item -> {
-                    if (item.length == 1)
-                        builder.tags(item[0]);
-                    else
-                        builder.tag(item[0], item[1]);
-                });
-
+        AxMetricsUtils.tags(tags).forEach(tag -> {
+            if (tag.getValue() == null)
+                builder.tags(tag.getKey());
+            else
+                builder.tag(tag.getKey(), tag.getValue().toString());
+        });
         return builder.register(meterRegistry);
     }
 
