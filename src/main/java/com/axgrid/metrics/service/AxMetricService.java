@@ -36,7 +36,7 @@ public class AxMetricService {
      * Set value for gauge
      * @param key gauge name
      * @param value value
-     * @param tags tags separate by ; (key1=value1;key2=value2)
+     * @param tags tags separate by ; (key1:value1;key2:value2)
      */
     public void set(String key, double value, String tags) { gaugeRepository.set(key, value, tags); }
 
@@ -57,7 +57,7 @@ public class AxMetricService {
      * Increment value for counter
      * @param key counter name
      * @param value increment value
-     * @param tags tags separate by ; (key1=value1;key2=value2)
+     * @param tags tags separate by ; (key1:value1;key2:value2)
      */
     public void increment(String key, double value, String tags) { counterRepository.increment(key, value, tags); }
 
@@ -74,7 +74,7 @@ public class AxMetricService {
      * @param key timer name
      * @param value time value
      * @param unit units
-     * @param tags tags separate by ; (key1=value1;key2=value2)
+     * @param tags tags separate by ; (key1:value1;key2:value2)
      */
     public void record(String key, long value, TimeUnit unit, String tags) { timerRepository.record(key, value, unit, tags); }
 

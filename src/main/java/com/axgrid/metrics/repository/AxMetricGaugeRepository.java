@@ -42,7 +42,12 @@ public class AxMetricGaugeRepository {
         if (tags != null && !tags.equals(""))
             Arrays.stream(tags.split(Pattern.quote(";")))
                     .map(item -> item.split(Pattern.quote(":")))
-                    .forEach(item -> builder.tag(item[0], item[1]));
+                    .forEach(item -> {
+                        if (item.length == 1)
+                            builder.tags(item[0]);
+                        else
+                            builder.tag(item[0], item[1]);
+                    });
         builder.register(meterRegistry);
     }
 
