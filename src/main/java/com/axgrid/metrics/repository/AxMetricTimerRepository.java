@@ -6,11 +6,9 @@ import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 @Repository
 public class AxMetricTimerRepository {
@@ -20,15 +18,15 @@ public class AxMetricTimerRepository {
 
     final Map<String, Map<String, Timer>> data;
 
-    public void record(String key, long value, TimeUnit unit) {
-        record(key, value, unit,"");
-    }
-
-    public void record(String key, long value, TimeUnit unit, String tags) {
+    public void init(String key, String tags) {
         if (!data.containsKey(key))
             data.put(key, new HashMap<>());
         if (!data.get(key).containsKey(tags))
             data.get(key).put(tags, createTimer(key, tags));
+    }
+
+    public void record(String key, long value, TimeUnit unit, String tags) {
+        init(key, tags);
         data.get(key).get(tags).record(value, unit);
     }
 

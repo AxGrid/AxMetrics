@@ -21,13 +21,41 @@ public class AxMetricService {
     @Autowired
     AxMetricTimerRepository timerRepository;
 
+
+    /**
+     * Init gauge with 0 value
+     * @param key gauge name
+     */
+    public void initGauge(String key) { initGauge(key, ""); }
+
+    /**
+     * Init gauge with 0 value
+     * @param key gauge name
+     * @param tags tags separate by ; or = (key1:value1;key2:value2)
+     */
+    public void initGauge(String key, String tags) {
+        if (log.isDebugEnabled()) log.debug("AxMetric initGauge(key:{})", key);
+        gaugeRepository.init(key, tags);
+    }
+
+    public void initCounter(String key) { initCounter(key, ""); }
+    public void initCounter(String key, String tags) {
+        if (log.isDebugEnabled()) log.debug("AxMetric initCounter(key:{})", key);
+        counterRepository.init(key, tags);
+    }
+
+    public void initTimer(String key) { initTimer(key, ""); }
+    public void initTimer(String key, String tags) {
+        if (log.isDebugEnabled()) log.debug("AxMetric initTimer(key:{})", key);
+        timerRepository.init(key, tags);
+    }
+
     /**
      * Set value for gauge by 1
      * @param key gauge name
      */
     public void set(String key) {
-        if (log.isDebugEnabled()) log.debug("AxMetric set(key:{})", key);
-        gaugeRepository.set(key);
+        set(key, 0, "");
     }
 
     /**
@@ -36,8 +64,7 @@ public class AxMetricService {
      * @param value value
      */
     public void set(String key, double value) {
-        if (log.isDebugEnabled()) log.debug("AxMetric set(key:{}, value:{})", key, value);
-        gaugeRepository.set(key, value); }
+        set(key, value, ""); }
 
     /**
      * Set value for gauge
@@ -54,20 +81,14 @@ public class AxMetricService {
      * Increment value for counter by 1
      * @param key counter name
      */
-    public void increment(String key) {
-        if (log.isDebugEnabled()) log.debug("AxMetric increment(key:{})", key);
-        counterRepository.increment(key);
-    }
+    public void increment(String key) { increment(key, 1, ""); }
 
     /**
      * Increment value for counter
      * @param key counter name
      * @param value increment value
      */
-    public void increment(String key, double value) {
-        if (log.isDebugEnabled()) log.debug("AxMetric increment(key:{}, value:{})", key, value);
-        counterRepository.increment(key, value);
-    }
+    public void increment(String key, double value) { increment(key, value, ""); }
 
     /**
      * Increment value for counter
@@ -87,8 +108,7 @@ public class AxMetricService {
      * @param unit units
      */
     public void record(String key, long value, TimeUnit unit) {
-        if (log.isDebugEnabled()) log.debug("AxMetric record(key:{}, value:{}, unit:{})", key, value, unit);
-        timerRepository.record(key, value, unit);
+        record(key, value, unit, "");
     }
 
     /**

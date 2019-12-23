@@ -3,14 +3,11 @@ package com.axgrid.metrics.repository;
 import com.axgrid.metrics.AxMetricsUtils;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 @Repository
 public class AxMetricGaugeRepository {
@@ -20,13 +17,6 @@ public class AxMetricGaugeRepository {
 
     final Map<String, Map<String, Number>> data;
 
-    public void set(String key) {
-        set(key, 1, "");
-    }
-
-    public void set(String key, double value) {
-        set(key, value, "");
-    }
 
     public void set(String key, double value, String tags) {
         if (!data.containsKey(key))
@@ -36,6 +26,10 @@ public class AxMetricGaugeRepository {
             createGauge(key, tags);
         }
         data.get(key).put(tags, value);
+    }
+
+    public void init(String key, String tags) {
+       set(key, 0, "");
     }
 
     private void createGauge(String key, String tags) {
