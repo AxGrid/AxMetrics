@@ -3,12 +3,14 @@ package com.axgrid.metrics.repository;
 import com.axgrid.metrics.AxMetricsUtils;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class AxMetricGaugeRepository {
 
@@ -19,13 +21,17 @@ public class AxMetricGaugeRepository {
 
 
     public void set(String key, double value, String tags) {
-        if (!data.containsKey(key))
-            data.put(key, new HashMap<>());
-        if (!data.get(key).containsKey(tags)) {
+        try {
+            if (!data.containsKey(key))
+                data.put(key, new HashMap<>());
+            if (!data.get(key).containsKey(tags)) {
+                data.get(key).put(tags, value);
+                createGauge(key, tags);
+            }
             data.get(key).put(tags, value);
-            createGauge(key, tags);
+        }catch (IllegalArgumentException ignore) {
+            if (log.isDebugEnabled()) log.debug(ignore.getMessage());
         }
-        data.get(key).put(tags, value);
     }
 
     public void init(String key, String tags) {
